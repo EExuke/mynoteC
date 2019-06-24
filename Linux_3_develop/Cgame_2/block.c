@@ -39,14 +39,14 @@ void move_block(struct block *block );
 //主函数；
 int main(void)
 {
-	struct block b1 = { 4,2,5,5,1,1, show_block , clear_block , move_block };
+	struct block b1 = { 3,1,5,5,1,1, show_block , clear_block , move_block };
 	system("clear");
 	show_background();
-	printf( "\033[? 251" );
+	printf( "\033[?25l" );
 	while(1)
 	{
 		b1.show(b1);
-		msleep(100);
+		msleep(250);
 		b1.clear(b1);
 		b1.move(&b1);
 	}
@@ -61,7 +61,7 @@ void show_block(struct block block)
 	{
 		for( j = 0 ; j < block.W ; j++ )
 		{
-			printf("\033[%d; %dH\033[43m \033[0m" , block.row + i , block.col + j );
+			printf("\033[%d;%dH \033[43m \033[0m" , block.row + i , block.col + j );
 		}
 	}
 	fflush(stdout);
@@ -75,7 +75,9 @@ void clear_block(struct block block)
 	{
 		for( j = 0 ; j < block.W ; j++ )
 		{
-			printf("\033[%d; %dH \033[0m" , block.row + i , block.col + j);
+			printf("\033[%d;%dH \033[0m" , block.row + i , block.col + j);
+			printf("\033[2J");
+			show_background();
 		}
 	}
 	fflush(stdout);
@@ -100,14 +102,14 @@ void show_background(void)
 	//画出上下左右边框;
 	for( i = 1 ; i <= ROW ; i++ )
 	{
-		printf( "\033[%d; 1H \033[43m \033[0m" , i );
-		printf( "\033[%d; %dH \033[43m \033[0m", i , COL );
+		printf( "\033[%d;1H \033[43m \033[0m" , i );
+		printf( "\033[%d;%dH \033[43m \033[0m", i , COL );
 	}
 
 	for( i = 1 ; i <= COL ; i++ )
 	{		
-		printf( "\033[1; %dH \033[43m \033[0m" , i );
-		printf( "\033[%d; %dH \033[43m \033[0m", ROW , i );
+		printf( "\033[1;%dH \033[43m \033[0m" , i );
+		printf( "\033[%d;%dH \033[43m \033[0m", ROW , i );
 	}
 }
 
