@@ -121,7 +121,30 @@ void showmenu(char * menu[] , int index)
  **********************************************************************************/
 static int_Get_User_Input(void)
 {
-	
+	int type = UNKNOWN ;
+	char ch ;
+
+	system("stty - echo") ;
+	system("stty - icanon") ;
+	//获取用户输入，阻塞
+	ch = getchar();
+	if(ch == 'q')
+			type = ESC ;
+	if(ch == '' || ch == '\n')
+			type = ENTER ;
+	if(ch == '\033' && getchar() == '[')
+	{
+			switch(getchar())
+			{
+				case 'A' : type = UP ; break ;
+				case 'B' : type = DOWN ; break ;
+				case 'C' : type = RIGHT ; break ;
+				case 'D' : type = LEFT ; break ;
+			}
+	}
+	system("stty echo");
+	system("stty icanon");
+	return type ;
 }
 
 /**********************************************************************************
@@ -130,6 +153,19 @@ static int_Get_User_Input(void)
 int Get_User_input(int * index , int size)
 {
 	int type ;
+	type = _Get_User_Input();
+
+	switch(type)
+	{
+		case UP			 :	if( * index > 0) * index -= 1 ; break ;
+		case DOWN		 :	if(	*	index	<	size - 1) * index += 1	;	break ;
+		case LEFT		 :	break;
+		case RIGHT 	 :	break;
+		case ENTER	 :	return ENTER;
+		case ESC		 :	return 1;
+		case UNKNOWN :	break;
+	}
+	return 0 ;
 }
 
 /**********************************************************************************
@@ -137,7 +173,21 @@ int Get_User_input(int * index , int size)
  **********************************************************************************/
 void stu_add(void)
 {
-	
+	system("clear");
+	printf("								学生信息添加\n");
+
+	if(student >= SIZE)
+			printf("学生信息已满\n");
+	printf("学生姓名 ：");
+	scanf("%s" , array[stucount].name);
+	printf("\n 学生ID ：");
+	scanf("%d" , &(array[stucount].id));
+	printf("\n 学生成绩 : ");
+	scanf("%f" , &(array[stucount].score));
+
+	stucount ++ ;
+	getchar();		//清掉输入缓冲区；		
+	fflush(NULL);
 }
 
 /**********************************************************************************
@@ -145,7 +195,27 @@ void stu_add(void)
  **********************************************************************************/
 void stu_show(void)
 {
-	
+	system("clear");
+	printf("							学生信息打印\n");
+
+	printf("\033[2;5HID:");
+	printf("\033[2;25H 姓名：");
+	printf("\033[2;45H 分数：");
+	fflush(stdout);
+
+	int i ;
+	for( i = 0 ; i < stucount ; i++ )
+	{
+			printf("\033[%d;5H%2d" , i+4 , array[i].id);
+			printf("\033[%d;25H%s" , i+4 , array[i].name);
+			printf("\033[%d;45H%f" , i+4 , array[i].score);
+	}
+	fflush(stdout);
+
+	printf("\033[25;0HPlease press any key to continue ...\n");
+	system("stty - icanon");
+	getchar();		//阻塞；
+	system("stty icanon");
 }
 
 /**********************************************************************************
@@ -153,7 +223,31 @@ void stu_show(void)
  **********************************************************************************/
 void search_id(int id)
 {
-	
+	system("clear");
+	printf("								学生信息打印\n");
+
+	printf("\033[2;5HID:");
+	printf("\033[2;25H 姓名：");
+	printf("\033[2;45H 分数：");
+	fflush(stdout);
+
+	int i , j ;
+	for( i = 0 , j = 0 ; i < stucount ; i++ )
+	{
+			if(array[i].id == id)
+			{
+				printf("\033[%d;5H%2d" , j+4 , array[i].id);
+				printf("\033[%d;25H%s" , j+4 , array[i].name);
+				printf("\033[%d;45H%f" , j+4 , array[i].score);
+				j++	;
+			}
+	}
+	fflush(stdout);
+
+	printf("\033[25;0HPlease press any key to continue ...\n");
+	system("stty - icanon");
+	getchar();		//阻塞；
+	system("stty icanon");
 }
 
 /**********************************************************************************
@@ -161,7 +255,31 @@ void search_id(int id)
  **********************************************************************************/
 void search_name(const char * name)
 {
-	
+		system("clear");
+	printf("								学生信息打印\n");
+
+	printf("\033[2;5HID:");
+	printf("\033[2;25H 姓名：");
+	printf("\033[2;45H 分数：");
+	fflush(stdout);
+
+	int i , j ;
+	for( i = 0 , j = 0 ; i < stucount ; i++ )
+	{
+			if(strcmp(array[i].name , name) == 0)
+			{
+				printf("\033[%d;5H%2d" , j+4 , array[i].id);
+				printf("\033[%d;25H%s" , j+4 , array[i].name);
+				printf("\033[%d;45H%f" , j+4 , array[i].score);
+				j++	;
+			}
+	}
+	fflush(stdout);
+
+	printf("\033[25;0HPlease press any key to continue ...\n");
+	system("stty - icanon");
+	getchar();		//阻塞；
+	system("stty icanon");
 }
 
 /**********************************************************************************
@@ -169,7 +287,52 @@ void search_name(const char * name)
  **********************************************************************************/
 void stu_search(void)
 {
-	
+	char ch ;
+	int id ;
+	char name[30];
+repeat:
+	system("clear");
+	printf("								学生信息查找\n");
+
+	printf("请选择按什么方式查找学生信息：\n");
+
+	printf("						1.ID \n");
+	printf("						2.NAME \n");
+	fflush(stdout);
+
+	system("stty - icanon");
+	ch = getchar();		//阻塞；
+	system("stty icanon");
+
+	if(ch == '1')
+	{
+			printf("请输入学生ID：");
+			fflush(stdout);
+			scanf("%d" , &id);
+			getchar();
+			if(id < 0)
+			{
+				getchar();
+				printf("输入ID有误，请按任意键重新选择输入\n");
+				system("stty - icanon");
+				getchar();		//阻塞；
+				system("stty icanon");
+				goto repeat;
+			}
+			search_id(id);
+	}
+	if(ch == '2')
+	{
+		printf("请输入学生姓名：");
+		fflush(stdout);
+		scanf("%s" , name);
+		getchar();
+		search_name(name);
+	}
+	if(ch != '1' && ch != '2')
+	{
+		goto repeat;
+	}
 }
 
 /**********************************************************************************
@@ -177,6 +340,24 @@ void stu_search(void)
  **********************************************************************************/
 void stu_save(void)
 {
+	FILE	*filp = NULL ;
+	char ch ;
+	char Path[30];
+repeat1:
+	system("clear");
+	printf("							学生信息保存\n");
+
+	printf("请选择按什么方式保存信息：\n");
+	printf("							1.追加 \n");
+	printf("							1.覆盖 \n");
+	fflush(stdout);
+
+	system("stty - icanon");
+	ch = getchar();		//阻塞；
+	system("stty icanon");
+
+	printf("\n\n\n 请输入保存文件名：\n");
+	scanf("%s" , Path);
 	
 }
 
