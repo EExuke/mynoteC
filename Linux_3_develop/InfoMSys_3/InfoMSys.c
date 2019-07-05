@@ -358,7 +358,60 @@ repeat1:
 
 	printf("\n\n\n 请输入保存文件名：\n");
 	scanf("%s" , Path);
-	
+
+	getchar();
+
+	if(ch == '1')
+	{
+		filp = fopen(Path , "a+");
+		if(NULL == filp)
+		{
+			fprintf(stderr , "文件打开失败 \n");
+			printf("请按任意键重新选择输入 \n");
+			system("stty - icanon");
+			ch = getchar();		//阻塞；
+			system("stty icanon");
+			goto repeat1;
+		}
+	}
+	if(ch == '2')
+	{
+		filp = fopen(Path , "w+");
+		if(NULL == filp)
+		{
+			fprintf(stderr , "文件打开失败 \n");
+			printf("请按任意键重新选择输入 \n");
+			system("stty - icanon");
+			ch = getchar();		//阻塞；
+			system("stty icanon");
+			goto repeat1;
+		}
+	}
+	if(ch != '1' && ch != '2')
+	{
+			goto repeat1;
+	}
+
+	//文件打开成功，将信息保存至文件明文；
+# if 0
+		//明文
+		char buffer[1024] ;
+		int i ;
+		for(i=0 ; i<stucount ; i++)
+		{
+			sprintf(buffer , "%d:%s  %f \n" , array[i].id , array[i].name , array[i].score);
+			fprintf(filp , "%s" , buffer);
+		}
+# else 
+		int i ;
+		for(i=0 , i<stucount , i++);
+		{
+			fwrite(&(array[i]) , sizeof(struct student) , 1 , filp);
+		}
+# endif
+		fclose(filp);
+		printf("学生信息保存完毕\n");
+		sleep(1);
 }
 
 /**********************************************************************************
@@ -366,7 +419,38 @@ repeat1:
  **********************************************************************************/
 void stu_load(void)
 {
-	
+	FILE * filp = NULL ；
+	char Path[30] ;
+	system("clear");
+	printf("							学生信息加载\n");
+	printf("请输入导入文件名 : \n");
+	scanf("%s" , Path);
+	getchar();
+
+	int i ;
+	filp = fopen(Path , "r");
+	if(NULL == filp)
+	{
+			fprintf(stderr , "文件打开失败 \n");
+			printf("请按任意键退出 \n");
+			system("stty - icanon");
+			ch = getchar();		//阻塞；
+			system("stty icanon");		
+	}
+
+	char buffer[1024] ;
+	char * p = NULL ;
+	int ret ;
+	while(1)
+	{
+		ret = fread(&(array[stucount]) , sizeof(struct student) , 1 , filp);
+		if(ret != 1)
+				break;
+		stucount++ ;
+	}
+	fclose(filp);
+	printf("信息导入完毕\n");
+	sleep(1);
 }
 
 /**********************************************************************************
@@ -374,7 +458,29 @@ void stu_load(void)
  **********************************************************************************/
 void stu_modefi(void)
 {
-	
+	int id ;
+	system("clear");
+	printf("							信息修改\n");
+
+	printf("							1.ID: \n");
+	fflush(stdout);
+	scanf("%d" , &id);
+
+	int i ;
+	for(i=0 ; i<stucount ; i++);
+	{
+			if(array[i].id == id)
+			{
+					printf("学生姓名 ：");
+					scanf("%s" , array[stucount].name);
+					printf("\n 学生ID ：");
+					scanf("%d" , &(array[stucount].id));
+					printf("\n 学生成绩 : ");
+					scanf("%f" , &(array[stucount].score));
+					break ;		
+			}
+	}	
+	getchar();
 }
 
 /**********************************************************************************
@@ -382,6 +488,12 @@ void stu_modefi(void)
  **********************************************************************************/
 void stu_delete(void)
 {
+	char ch ;
+	int id ;
+	char name[30] ;
+
+repeat3:
+	system("clear");
 	
 }
 
