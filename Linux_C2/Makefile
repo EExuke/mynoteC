@@ -8,7 +8,7 @@ ${TARGET}:${LINKFILE}
 
 $< : main.c
 	gcc -c 
-$
+
 	echo"*****$^	***** $@"
 	echo"*************excute TARGET **************"
 	#./${TARGET}
@@ -23,7 +23,7 @@ $
 #	gcc -c say_hello.c
 #say_goodbey.o:say_goodbey.c
 #	gcc -c say_goodbey.c
-#clean:
-#	rm -rf *.o
-#	rm -rf main
-#	rm -rf a.out
+clean:
+	rm -rf *.o
+	rm -rf main
+	rm -rf a.out
