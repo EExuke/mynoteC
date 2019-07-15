@@ -1,7 +1,3 @@
-/**************************************************************************** **
- * Copyright (C) 2010-2011 Cameo Communications, Inc.
- **************************************************************************** **/
-
 /* ************************************************************************** **
  *     MODULE NAME            : system
  *     LANGUAGE               : C
@@ -16,10 +12,13 @@
 ** ************************************************************************** */
 
 #include <stdio.h>
-#include "/home/xuke/bin/dbg.h"
 
 #include <fcntl.h>
-#include <Unistd.h>
+#include <unistd.h>
+
+char File_name[10];
+static int i ;
+
 /****************************************************************************
  *  Function Name : main
  *  Description   : The Main Function.
@@ -30,6 +29,20 @@
  ****************************************************************************/
 int main(void)
 {
+    FILE * fd ;
+    for(i=0 ; i<10 ; i++)
+    {
+        //利用sprintf函数重组文件名
+        sprintf(File_name , "file%d" , i);
+        fd = fopen(File_name , "w+");
+        if(fd == NULL)
+        {
+            printf("open file fair ! \n");
+            return -1 ;
+        }
+        printf("open file%d success\n" , i);
+        fclose(fd);
+    }
     return 0;
 }
 
